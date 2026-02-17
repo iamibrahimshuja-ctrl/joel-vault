@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joel's Vault (Private Demo)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        body { background-color: #0f0f0f; color: white; font-family: 'Inter', sans-serif; }
+        .glow { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
+        .result-card { transition: all 0.2s; }
+        .result-card:hover { transform: translateY(-2px); background-color: #1f2937; cursor: pointer; border-left: 4px solid #3b82f6; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        function App() {
+            const [query, setQuery] = React.useState("");
+            const [player, setPlayer] = React.useState(null);
+            
+            // THE "MAGIC TRICK" REAL DATA (QA TESTED BY FOUNDER)
+            const mockResults = {
+                "appointments": [
+                    { time: 2013, text: "how many appointments do you have that's the question that I ask everybody..." },
+                    { time: 2043, text: "they're like oh I have like one or two appointments and it's like one or two appointments..." }
+                ],
+                "closing": [
+                    { time: 1879, text: "I think the biggest struggle with is closing paid ad leads once you can do that you basically unlock the keys to your agency..." },
+                    { time: 1922, text: "so biggest challenge is closing leads that are not referrals and the faster you can work through that challenge the easier it's going to be to scale..." }
+                ],
+                "niche": [
+                    { time: 628, text: "whether you're switching a niche or starting out um you got like for me I feel like my superpower in that Niche is that I can speak their language..." },
+                    { time: 1069, text: "if you could take that first month just to learn the niche and actually read some of the things they read..." },
+                    { time: 1529, text: "how much more confident are you in scaling to 100K a month if you had to start all over again from scratch in a brand new Niche..." }
+                ]
+            };
+
+            const [results, setResults] = React.useState([]);
+
+            React.useEffect(() => {
+                const tag = document.createElement('script');
+                tag.src = "https://www.youtube.com/iframe_api";
+                const firstScriptTag = document.getElementsByTagName('script')[0];
+                firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+                window.onYouTubeIframeAPIReady = () => {
+                    const newPlayer = new YT.Player('player', {
+                        height: '100%',
+                        width: '100%',
+                        videoId: '1XTvEEIUE9c', 
+                        playerVars: { 
+                            'playsinline': 1, 
+                            'theme': 'dark',
+                            'origin': window.location.origin 
+                        }
+                    });
+                    setPlayer(newPlayer);
+                };
+            }, []);
+
+            const handleSearch = (e) => {
+                const text = e.target.value.toLowerCase();
+                setQuery(text);
+                if (mockResults[text]) {
+                    setResults(mockResults[text]);
+                } else {
+                    setResults([]);
+                }
+            };
+
+            const jumpTo = (seconds) => {
+                if (player && player.seekTo) {
+                    player.seekTo(seconds, true);
+                    player.playVideo();
+                }
+            };
+
+            return (
+                <div className="max-w-4xl mx-auto p-6 min-h-screen flex flex-col">
+                    <header className="flex justify-between items-center mb-10 border-b border-gray-800 pb-4">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center font-bold text-xl">J</div>
+                            <h1 className="text-xl font-bold tracking-tight">The Joel Kaplan Vault <span className="text-xs bg-blue-900 text-blue-300 px-2 py-1 rounded ml-2">BETA</span></h1>
+                        </div>
+                        <div className="text-sm text-gray-400">Indexed: 1 Video (Demo)</div>
+                    </header>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 flex-grow">
+                        <div className="space-y-6">
+                            <div className="space-y-2">
+                                <h2 className="text-3xl font-bold">Your searchable AI brain.</h2>
+                                <p className="text-gray-400">Search "Appointments", "Closing", or "Niche"
